@@ -36,8 +36,8 @@ services:
 
   app:
     # Image construite et envoyee par Jenkins
-    # Version actuelle : 1.4
-    image: ${IMAGE_NAME:-salim145/timesheet-devops:1.4}
+    # Version actuelle : 1.5
+    image: ${IMAGE_NAME:-salim145/timesheet-devops:1.5}
 
     container_name: timesheet-app
     restart: unless-stopped
