@@ -3,53 +3,67 @@
 #   docker compose up -d
 #   docker compose logs -f
 #   docker compose down
+
 name: timesheet
 
 services:
+
   mysqldb:
     image: mysql:8.0
     container_name: timesheet-mysql
     restart: unless-stopped
+
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: timesheet_db
+
     ports:
-      # 3307 cote Windows/WSL pour ne pas entrer en conflit avec un MySQL/XAMPP deja installe
+      # 3307 cote Windows/WSL pour ne pas entrer en conflit avec MySQL/XAMPP
       - "3307:3306"
+
     volumes:
       - mysql_data:/var/lib/mysql
+
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
       interval: 10s
       timeout: 5s
       retries: 12
+
     networks:
       - devops-net
 
+
   app:
-    # IMAGE_NAME est fourni par Jenkins (ex: moncompte/timesheet-devops:1.0.0)
-    image: ${IMAGE_NAME:-timesheet-devops:1.0.0}
+    # Image construite et envoyee par Jenkins
+    # Version actuelle : 1.2
+    image: ${IMAGE_NAME:-salim145/timesheet-devops:1.2}
+
     container_name: timesheet-app
     restart: unless-stopped
+
     depends_on:
       mysqldb:
         condition: service_healthy
+
     environment:
-      # "mysqldb" = nom du service MySQL ci-dessus (resolution DNS du reseau Docker)
       SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/timesheet_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+
     ports:
       - "8082:8082"
+
     networks:
       - devops-net
+
 
 volumes:
   mysql_data:
 
+
 networks:
-  # Reseau partage avec Prometheus (devops/docker-compose.yml) pour qu'il puisse lire les metriques de l'app.
-  # Il est cree une seule fois avec : docker network create devops-net
+  # Reseau partage avec Prometheus
   devops-net:
     name: devops-net
     external: true

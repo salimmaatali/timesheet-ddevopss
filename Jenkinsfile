@@ -28,9 +28,8 @@ pipeline {
     }
 
     environment {
-        // Image Docker : <compte>/timesheet-devops:1.0.0 (aussi lue par docker-compose.yml)
-        IMAGE_NAME = "${params.DOCKERHUB_USER}/timesheet-devops:1.0.0"
-    }
+    IMAGE_NAME = "${params.DOCKERHUB_USER}/timesheet-devops:1.2"
+}
 
     triggers {
         // Verifie GitHub toutes les ~2 minutes : un nouveau push lance le pipeline automatiquement
@@ -95,7 +94,7 @@ pipeline {
 
         stage('NEXUS') {
             steps {
-                // Depose timesheet-devops-1.0.jar dans maven-releases (tests deja faits -> skip)
+                // Depose timesheet-devops-1.2.jar dans maven-releases (tests deja faits -> skip)
                 withCredentials([usernamePassword(credentialsId: 'nexus-credentials',
                                                   usernameVariable: 'NEXUS_USER',
                                                   passwordVariable: 'NEXUS_PASSWORD')]) {
