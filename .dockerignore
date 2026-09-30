@@ -1,0 +1,3 @@
+# Seul target/*.jar est necessaire pour construire l'image
+*
+!target/timesheet-devops-1.0.jar

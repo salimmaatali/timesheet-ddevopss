@@ -1,0 +1,96 @@
+# Outils de la chaine DevOps (Jenkins est installe directement dans Ubuntu WSL, pas ici).
+#
+#   cd devops
+#   docker network create devops-net      (une seule fois)
+#   docker compose up -d                  (demarre tout)
+#   docker compose ps                     (etat des conteneurs)
+#   docker compose logs -f nexus          (suivre les logs d'un service)
+#   docker compose stop / start           (arreter / redemarrer SANS perdre les donnees)
+#
+# Les donnees sont gardees dans des volumes Docker : "docker compose down" ne les supprime pas
+# (seul "docker compose down -v" les supprime).
+name: devops
+
+services:
+  sonarqube:
+    image: sonarqube:9.9-community
+    container_name: sonarqube
+    restart: unless-stopped
+    environment:
+      # Evite l'erreur "vm.max_map_count [65530] is too low" sous WSL/Docker Desktop
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    networks:
+      - devops-net
+
+  nexus:
+    image: sonatype/nexus3:3.70.1
+    container_name: nexus
+    restart: unless-stopped
+    environment:
+      # Limite la memoire de Nexus (sinon il prend ~2.7 Go)
+      INSTALL4J_ADD_VM_PARAMS: "-Xms512m -Xmx1024m -XX:MaxDirectMemorySize=1024m"
+    ports:
+      - "8081:8081"
+    volumes:
+      - nexus_data:/nexus-data
+    networks:
+      - devops-net
+
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    extra_hosts:
+      # Permet a Prometheus de joindre Jenkins (qui tourne dans Ubuntu, hors Docker)
+      - "host.docker.internal:host-gateway"
+    networks:
+      - devops-net
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - devops-net
+
+  # Faux serveur mail pour le "mail recapitulatif" de Jenkins :
+  # SMTP sur le port 1025, boite de reception visible sur http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:v1.20
+    container_name: mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - devops-net
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  nexus_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  devops-net:
+    name: devops-net
+    external: true

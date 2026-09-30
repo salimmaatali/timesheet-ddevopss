@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  settings.xml utilise par Jenkins pour "mvn deploy" vers Nexus.
+
+  Le cours modifie /usr/share/maven/conf/settings.xml a la main. Ici on garde le fichier
+  dans le projet et le mot de passe reste dans Jenkins (credential "nexus-credentials") :
+  Jenkins remplit NEXUS_USER / NEXUS_PASSWORD au moment du build.
+
+  L'<id> doit etre identique a celui de <distributionManagement> dans pom.xml : deploymentRepo
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <servers>
+    <server>
+      <id>deploymentRepo</id>
+      <username>${env.NEXUS_USER}</username>
+      <password>${env.NEXUS_PASSWORD}</password>
+    </server>
+  </servers>
+</settings>

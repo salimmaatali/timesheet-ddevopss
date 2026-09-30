@@ -1,0 +1,26 @@
+# Configuration Prometheus : quelles cibles interroger et a quelle frequence.
+# Verifier les cibles : http://localhost:9090/targets (toutes doivent etre "UP")
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Prometheus se surveille lui-meme
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Jenkins (plugin "Prometheus metrics") -> http://localhost:8080/prometheus/
+  # Jenkins tourne dans Ubuntu WSL, hors Docker : on le joint via host.docker.internal.
+  # Si la cible reste "DOWN", remplacer host.docker.internal par l'IP donnee par
+  # "hostname -I" dans Ubuntu, puis : docker compose restart prometheus
+  - job_name: 'jenkins'
+    metrics_path: '/prometheus/'
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+
+  # Application Spring Boot (Actuator + Micrometer), lancee par le docker-compose.yml du projet
+  - job_name: 'timesheet-app'
+    metrics_path: '/timesheet-devops/actuator/prometheus'
+    static_configs:
+      - targets: ['timesheet-app:8082']
