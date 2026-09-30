@@ -28,7 +28,8 @@ pipeline {
     }
 
     environment {
-    IMAGE_NAME = "${params.DOCKERHUB_USER}/timesheet-devops:1.5"
+    IMAGE_REPO = "${params.DOCKERHUB_USER}/timesheet-devops"
+    APP_VERSION = "1.${BUILD_NUMBER}"
 }
 
     triggers {

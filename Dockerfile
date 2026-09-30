@@ -6,10 +6,10 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-ARG JAR_FILE=target/timesheet-devops-1.5.jar
+ARG APP_VERSION
 
-COPY ${JAR_FILE} timesheet-devops-1.5.jar
+COPY target/timesheet-devops-${APP_VERSION}.jar app.jar
 
 EXPOSE 8082
 
-ENTRYPOINT ["java", "-jar", "timesheet-devops-1.5.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
