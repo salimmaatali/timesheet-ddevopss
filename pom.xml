@@ -21,7 +21,7 @@
 		<!-- Byte Buddy recent : permet a Mockito de fonctionner aussi avec un JDK 21 -->
 		<byte-buddy.version>1.14.19</byte-buddy.version>
 		<jacoco.version>0.8.12</jacoco.version>
-		<sonar-maven-plugin.version>3.11.0.2382</sonar-maven-plugin.version>
+		<sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
 
 		<!-- SonarQube : nom du projet + rapport de couverture genere par JaCoCo -->
 		<sonar.projectKey>timesheet-devops</sonar.projectKey>
