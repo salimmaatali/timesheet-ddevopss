@@ -28,7 +28,7 @@ pipeline {
     }
 
     environment {
-    IMAGE_NAME = "${params.DOCKERHUB_USER}/timesheet-devops:1.3"
+    IMAGE_NAME = "${params.DOCKERHUB_USER}/timesheet-devops:1.4"
 }
 
     triggers {
@@ -94,7 +94,7 @@ pipeline {
 
         stage('NEXUS') {
             steps {
-                // Depose timesheet-devops-1.3.jar dans maven-releases (tests deja faits -> skip)
+                // Depose timesheet-devops-1.4.jar dans maven-releases (tests deja faits -> skip)
                 withCredentials([usernamePassword(credentialsId: 'nexus-credentials',
                                                   usernameVariable: 'NEXUS_USER',
                                                   passwordVariable: 'NEXUS_PASSWORD')]) {
