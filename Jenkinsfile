@@ -53,6 +53,20 @@ pipeline {
                 sh 'git log -1 --oneline'
             }
         }
+stage('VERSION') {
+    steps {
+        sh '''
+            echo "Version Jenkins : 1.${BUILD_NUMBER}"
+
+            mvn -B versions:set \
+                -DnewVersion=1.${BUILD_NUMBER} \
+                -DgenerateBackupPoms=false
+
+            echo "Version actuelle :"
+            grep -n "<version>" pom.xml | head
+        '''
+    }
+}
 
         stage('DATE SYSTEME') {
             steps {
