@@ -1,6 +1,6 @@
 // =====================================================================
 //  Pipeline CI/CD - timesheet-devops
-//  GIT -> DATE -> MVN CLEAN/COMPILE -> MOCKITO/JUNIT -> SONARQUBE -> NEXUS
+//  GIT -> DATE -> MVN CLEAN/COMPILE -> MOCKITO/JUNIT -> MVN PACKAGE
 //      -> DOCKER IMAGE -> DOCKER HUB -> DOCKER COMPOSE -> VERIFICATION -> MAIL
 // =====================================================================
 pipeline {
@@ -79,6 +79,12 @@ pipeline {
                 always {
                     junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
                 }
+            }
+        }
+
+        stage('MVN PACKAGE') {
+            steps {
+                sh 'mvn -B package -DskipTests'
             }
         }
 
