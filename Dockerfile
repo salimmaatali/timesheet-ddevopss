@@ -4,15 +4,12 @@
 # Image Java officielle pour exécuter Spring Boot
 FROM eclipse-temurin:17-jre-alpine
 
-LABEL maintainer="equipe-devops"
-
 WORKDIR /app
 
-# JAR généré par Maven
-ARG JAR_FILE=target/timesheet-devops-1.2.jar
+ARG JAR_FILE=target/timesheet-devops-1.3.jar
 
-COPY ${JAR_FILE} timesheet-devops-1.2.jar
+COPY ${JAR_FILE} timesheet-devops-1.3.jar
 
 EXPOSE 8082
 
-ENTRYPOINT ["java", "-jar", "timesheet-devops-1.2.jar"]
+ENTRYPOINT ["java", "-jar", "timesheet-devops-1.3.jar"]
